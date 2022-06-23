@@ -1,21 +1,14 @@
-import React from "react"
+import { useState, useEffect } from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import { data } from "./data"
 import Split from "react-split"
 import {nanoid} from "nanoid"
 
-/**
- * Challenge: Spend 10-20+ minutes reading through the code
- * and trying to understand how it's currently working. Spend
- * as much time as you need to feel confident that you 
- * understand the existing code (although you don't need
- * to fully understand everything to move on)
- */
-
 export default function App() {
-    const [notes, setNotes] = React.useState([])
-    const [currentNoteId, setCurrentNoteId] = React.useState(
+    const notesFromLocal = localStorage.getItem('notes')
+    const [notes, setNotes] = useState(JSON.parse(notesFromLocal) || [])
+    const [currentNoteId, setCurrentNoteId] = useState(
         (notes[0] && notes[0].id) || ""
     )
     
@@ -41,6 +34,10 @@ export default function App() {
             return note.id === currentNoteId
         }) || notes[0]
     }
+
+    useEffect(() => {
+        localStorage.setItem('notes', JSON.stringify(notes))
+    }, [notes])
     
     return (
         <main>
