@@ -7,9 +7,11 @@ import {nanoid} from "nanoid"
 
 export default function App() {
     const [notes, setNotes] = useState(() => JSON.parse(localStorage.getItem('notes')) || [])
-    const [currentNoteId, setCurrentNoteId] = useState(
-        (notes[0] && notes[0].id) || ""
-    )
+    const [currentNoteId, setCurrentNoteId] = useState((notes[0] && notes[0].id) || "")
+
+    useEffect(() => {
+        localStorage.setItem('notes', JSON.stringify(notes))
+    }, [notes])
     
     function createNewNote() {
         const newNote = {
@@ -41,10 +43,11 @@ export default function App() {
         }) || notes[0]
     }
 
-    useEffect(() => {
-        localStorage.setItem('notes', JSON.stringify(notes))
-    }, [notes])
-    
+    function deleteNote(event, noteId) {
+        event.stopPropagation()
+        setNotes(prevNotes => prevNotes.filter(note => noteId !== note.id))
+    }
+
     return (
         <main>
         {
@@ -60,6 +63,7 @@ export default function App() {
                     currentNote={findCurrentNote()}
                     setCurrentNoteId={setCurrentNoteId}
                     newNote={createNewNote}
+                    deleteNote={deleteNote}
                 />
                 {
                     currentNoteId && 
